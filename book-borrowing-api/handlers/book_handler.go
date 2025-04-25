@@ -50,6 +50,7 @@ func (h *BookHandler) GetBook(w http.ResponseWriter, r *http.Request) {
 func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 	var book models.Book
 	err := json.NewDecoder(r.Body).Decode(&book)
+
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
