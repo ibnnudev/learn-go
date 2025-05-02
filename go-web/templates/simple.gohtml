@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{.title}}</title>
+  <title>{{.Title}}</title>
 </head>
 <body>
   <h1>
-    Halo {{.name}}!
+    Halo {{.Name}}!
   </h1>
+  <h2>Alamat</h2>
+  <p>
+    {{.Address.Street}},
+    {{.Address.City}},
+    {{.Address.State}},
+    {{.Address.ZipCode}}
+  </p>
 </body>
 </html>

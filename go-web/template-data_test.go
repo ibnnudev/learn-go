@@ -9,11 +9,23 @@ import (
 	"testing"
 )
 
+type Page struct {
+	Title   string
+	Name    string
+	Address map[string]any
+}
+
 func TemplateData(w http.ResponseWriter, r *http.Request) {
 	t := template.Must(template.ParseFiles("./templates/simple.gohtml"))
-	t.ExecuteTemplate(w, "simple.gohtml", map[string]interface{}{
-		"title": "Simple Website",
-		"name":  "Ibnnu Dev",
+	t.ExecuteTemplate(w, "simple.gohtml", Page{
+		Title: "Hello, World!",
+		Name:  "John Doe",
+		Address: map[string]any{
+			"Street":  "123 Main St",
+			"City":    "Anytown",
+			"State":   "CA",
+			"ZipCode": "12345",
+		},
 	})
 }
 
