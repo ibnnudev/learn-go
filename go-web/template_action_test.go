@@ -43,3 +43,54 @@ func TestTemplateAction(t *testing.T) {
 	body, _ := io.ReadAll(rec.Result().Body)
 	fmt.Println(string(body))
 }
+
+type Item struct {
+	Name  string
+	Price float32
+}
+
+type PriceListTemplate struct {
+	ID         int
+	Items      []Item
+	TotalItems int
+	TotalPrice float32
+}
+
+func PriceListAction(w http.ResponseWriter, r *http.Request) {
+	tpl := template.Must(template.ParseFiles("./templates/pricelist.gohtml"))
+	items := []Item{
+		{"Lenovo ThinkPad", 1200.00},
+		{"Dell XPS", 1500.00},
+		{"MacBook Pro", 2000.00},
+		{"Asus ZenBook", 1300.00},
+		{"HP Spectre", 1400.00},
+	}
+
+	var totalPrice float32
+	for _, item := range items {
+		totalPrice += item.Price
+	}
+
+	tpl.ExecuteTemplate(w, "pricelist.gohtml", PriceListTemplate{
+		ID:         1,
+		Items:      items,
+		TotalItems: len(items),
+		TotalPrice: totalPrice,
+	})
+
+}
+
+func TestPriceListAction(t *testing.T) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/pricelist", PriceListAction)
+	server := http.Server{
+		Addr:    ":8080",
+		Handler: mux,
+	}
+
+	err := server.ListenAndServe()
+	if err != nil {
+		panic(err)
+	}
+	defer server.Close()
+}
