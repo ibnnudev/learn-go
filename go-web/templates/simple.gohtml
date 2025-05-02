@@ -16,5 +16,13 @@
     {{.Address.State}},
     {{.Address.ZipCode}}
   </p>
+  {{if .IsActive}}
+    <p>Status: Aktif</p>
+  {{else}}
+    <p>Status: Tidak Aktif</p>
+  {{end}}
+
+  <h2>Status Lulus: {{if ge .FinalGrade 3.0}} Lulus{{else}}Tidak Lulus{{end}}</h2>
+
 </body>
 </html>
