@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -53,6 +54,42 @@ func TestTemplateFunctionGlobal(t *testing.T) {
 	response := httptest.NewRecorder()
 
 	TemplateFunctionGlobal(response, request)
+
+	body, _ := io.ReadAll(response.Body)
+	fmt.Println(string(body))
+}
+
+func TemplateCreateFuncGlobal(w http.ResponseWriter, r *http.Request) {
+	t := template.New("FUNCTION")
+	// t = t.Funcs(map[string]any{
+	// 	"upper": strings.ToUpper,
+	// })
+
+	// function pipeline
+	t = t.Funcs(template.FuncMap{
+		"upper": strings.ToUpper,
+		"sayhello": func(name string) string {
+			return fmt.Sprintf("Hello %s", name)
+		},
+	})
+
+	// t = template.Must(t.Parse(`{{upper .Name}}`))
+	// t.ExecuteTemplate(w, "FUNCTION", ProductItem{Name: "Macbook M1", Price: 1.99})
+
+	// function pipeline
+	t = template.Must(t.Parse(`{{sayhello .Name | upper}}`))
+	err := t.ExecuteTemplate(w, "FUNCTION", ProductItem{Name: "Macbook M1", Price: 1.99})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func TestTemplateCreateFuncGlobal(t *testing.T) {
+	request := httptest.NewRequest("GET", "/template_function", nil)
+	response := httptest.NewRecorder()
+
+	TemplateCreateFuncGlobal(response, request)
 
 	body, _ := io.ReadAll(response.Body)
 	fmt.Println(string(body))
